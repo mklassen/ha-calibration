@@ -1,0 +1,7 @@
+#!/bin/bash
+set -e
+isort --profile black custom_components
+black custom_components
+mypy custom_components
+pylint custom_components
+pytest

@@ -1,0 +1,10 @@
+black==23.1.0
+homeassistant-stubs==2023.2.0
+isort==5.12
+mypy==1.0.0
+numpy==1.23.2
+pylint==2.16.0
+pytest-cov==3.0.0
+pytest-homeassistant-custom-component==0.12.52
+pytest==7.2.1
+voluptuous-stubs==0.1.1
