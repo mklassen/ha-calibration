@@ -2,8 +2,9 @@
 from __future__ import annotations
 
 import logging
+from typing import cast
 
-from homeassistant.components.sensor import SensorEntity
+from homeassistant.components.sensor import SensorDeviceClass, SensorEntity
 from homeassistant.components.sensor.const import ATTR_STATE_CLASS, CONF_STATE_CLASS
 from homeassistant.const import (
     ATTR_DEVICE_CLASS,
@@ -118,7 +119,7 @@ class CalibrationSensor(SensorEntity):  # pylint: disable=too-many-instance-attr
         self._attr_unique_id = unique_id
         self._attr_name = name
         self._attr_native_unit_of_measurement = unit_of_measurement
-        self._attr_device_class = device_class
+        self._attr_device_class = cast(SensorDeviceClass, device_class)
         self._attr_icon = None
         self._attr_should_poll = False
 
@@ -170,8 +171,12 @@ class CalibrationSensor(SensorEntity):  # pylint: disable=too-many-instance-attr
                 self._attr_native_unit_of_measurement = state.attributes.get(
                     ATTR_UNIT_OF_MEASUREMENT
                 )
-            if self._attr_device_class is None:
-                self._attr_device_class = state.attributes.get(ATTR_DEVICE_CLASS)
+
+            if self._attr_device_class is None and (
+                device_class := state.attributes.get(ATTR_DEVICE_CLASS)
+            ):
+                self._attr_device_class = cast(SensorDeviceClass, device_class)
+
             if self._attr_icon is None:
                 self._attr_icon = state.attributes.get(ATTR_ICON)
 
