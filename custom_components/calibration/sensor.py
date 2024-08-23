@@ -18,7 +18,7 @@ from homeassistant.const import (
     STATE_UNAVAILABLE,
     STATE_UNKNOWN,
 )
-from homeassistant.core import HomeAssistant, State, callback
+from homeassistant.core import Event, HomeAssistant, State, callback
 from homeassistant.helpers import entity_registry
 from homeassistant.helpers.entity import (
     get_capability,
@@ -28,7 +28,7 @@ from homeassistant.helpers.entity import (
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.entity_registry import RegistryEntry, RegistryEntryHider
 from homeassistant.helpers.event import async_track_state_change_event
-from homeassistant.helpers.typing import ConfigType, DiscoveryInfoType, EventType
+from homeassistant.helpers.typing import ConfigType, DiscoveryInfoType
 
 from .const import (
     ATTR_COEFFICIENTS,
@@ -148,7 +148,7 @@ class CalibrationSensor(SensorEntity):  # pylint: disable=too-many-instance-attr
         )
 
     @callback
-    def _async_calibration_sensor_state_listener(self, event: EventType) -> None:
+    def _async_calibration_sensor_state_listener(self, event: Event) -> None:
         """Handle sensor state changes."""
         if (new_state := event.data.get("new_state")) is not None:
             self._update_state(new_state)
