@@ -2,12 +2,12 @@ black==24.3.0
 homeassistant-stubs==2024.4.0
 isort==5.12
 mypy==1.5.1
-numpy==1.26.0
-pylint==3.1.0
-pytest==8.1.1
+numpy==1.26.4
+pylint==3.3.1
+pytest==8.3.3
 pytest-aiohttp==1.0.5
-pytest-asyncio==0.23.6
+pytest-asyncio==0.24.0
 pytest-cov==5.0.0
 # https://github.com/MatthewFlamm/pytest-homeassistant-custom-component/releases
-pytest-homeassistant-custom-component>=0.13.111
+pytest-homeassistant-custom-component>=0.13.181
 voluptuous-stubs==0.1.1

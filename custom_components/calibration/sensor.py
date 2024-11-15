@@ -73,7 +73,7 @@ async def async_setup_platform(  # pylint: disable=too-many-locals
     if not (attribute := conf.get(CONF_ATTRIBUTE)):
         units = units or get_unit_of_measurement(hass, source)
         device_class = device_class or get_device_class(hass, source)
-        state_class = get_capability(hass, source, ATTR_STATE_CLASS)
+        state_class = state_class or get_capability(hass, source, ATTR_STATE_CLASS)
 
     if conf.get(CONF_HIDE_SOURCE) and source_entity and not source_entity.hidden:
         ent_reg.async_update_entity(source, hidden_by=RegistryEntryHider.INTEGRATION)
