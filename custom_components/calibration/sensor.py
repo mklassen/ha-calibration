@@ -1,8 +1,9 @@
 """Support for calibration sensor."""
+
 from __future__ import annotations
 
 import logging
-from typing import cast
+from typing import cast, Any
 
 from homeassistant.components.sensor import SensorDeviceClass, SensorEntity
 from homeassistant.components.sensor.const import ATTR_STATE_CLASS, CONF_STATE_CLASS
@@ -18,7 +19,13 @@ from homeassistant.const import (
     STATE_UNAVAILABLE,
     STATE_UNKNOWN,
 )
-from homeassistant.core import Event, HomeAssistant, State, callback
+from homeassistant.core import (
+    Event,
+    HomeAssistant,
+    State,
+    callback,
+    EventStateChangedData,
+)
 from homeassistant.helpers import entity_registry
 from homeassistant.helpers.entity import (
     get_capability,
@@ -123,7 +130,7 @@ class CalibrationSensor(SensorEntity):  # pylint: disable=too-many-instance-attr
         self._attr_icon = None
         self._attr_should_poll = False
 
-        attrs = {
+        attrs: dict[str, Any] = {
             ATTR_SOURCE_VALUE: None,
             ATTR_SOURCE: source,
             ATTR_SOURCE_ATTRIBUTE: attribute,
@@ -148,7 +155,9 @@ class CalibrationSensor(SensorEntity):  # pylint: disable=too-many-instance-attr
         )
 
     @callback
-    def _async_calibration_sensor_state_listener(self, event: Event) -> None:
+    def _async_calibration_sensor_state_listener(
+        self, event: Event[EventStateChangedData]
+    ) -> None:
         """Handle sensor state changes."""
         if (new_state := event.data.get("new_state")) is not None:
             self._update_state(new_state)
@@ -161,6 +170,9 @@ class CalibrationSensor(SensorEntity):  # pylint: disable=too-many-instance-attr
             if state.state not in (STATE_UNAVAILABLE, STATE_UNKNOWN)
             else None
         )
+
+        if source_value is None:
+            return
 
         _LOGGER.debug(
             "CalibrationSensor(%s) received update: %s", self.name, source_value
@@ -186,15 +198,15 @@ class CalibrationSensor(SensorEntity):  # pylint: disable=too-many-instance-attr
         except (ValueError, TypeError):
             source_value = native_value = None
             if self._source_attribute:
-                _LOGGER.warning(
+                _LOGGER.debug(
                     "%s attribute %s is not numerical",
                     self._source_entity_id,
                     self._source_attribute,
                 )
             else:
-                _LOGGER.warning("%s state is not numerical", self._source_entity_id)
+                _LOGGER.debug("%s state is not numerical", self._source_entity_id)
 
-        self._attr_extra_state_attributes[ATTR_SOURCE_VALUE] = source_value
+        #self._attr_extra_state_attributes[ATTR_SOURCE_VALUE] = source_value
         self._attr_native_value = native_value
 
         self.async_write_ha_state()

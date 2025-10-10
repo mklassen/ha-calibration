@@ -1,4 +1,5 @@
 """Calibration constants."""
+
 DOMAIN = "calibration"
 
 SENSOR = "calibration"

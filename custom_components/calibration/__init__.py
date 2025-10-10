@@ -1,4 +1,5 @@
 """The Calibration integration."""
+
 import logging
 
 import voluptuous as vol
@@ -89,7 +90,7 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
         x_values, y_values = zip(*conf[CONF_DATAPOINTS])
 
         # try to get valid coefficients for a polynomial
-        polynomial = Polynomial.fit(x_values, y_values, degree, domain=[])
+        polynomial = Polynomial.fit(x_values, y_values, degree, domain=[])  # type: ignore
         data = {
             k: v for k, v in conf.items() if k not in [CONF_DEGREE, CONF_DATAPOINTS]
         }
