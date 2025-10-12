@@ -20,6 +20,7 @@ from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.discovery import async_load_platform
 from homeassistant.helpers.typing import ConfigType
 from numpy.polynomial import Polynomial
+from scipy.interpolate import CubicSpline
 
 from .const import (
     CONF_CALIBRATION,
@@ -31,6 +32,9 @@ from .const import (
     DATA_CALIBRATION,
     DEFAULT_DEGREE,
     DEFAULT_PRECISION,
+    CONF_METHOD,
+    DEFAULT_METHOD,
+    VALID_METHODS,
     DOMAIN,
 )
 
@@ -64,6 +68,7 @@ CALIBRATION_SCHEMA = vol.Schema(
             vol.Range(min=1, max=7),
         ),
         vol.Optional(CONF_PRECISION, default=DEFAULT_PRECISION): cv.positive_int,
+        vol.Optional(CONF_METHOD, default=DEFAULT_METHOD): vol.In(VALID_METHODS),
     }
 )
 
@@ -86,15 +91,21 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
 
         degree = conf[CONF_DEGREE]
 
-        # get x values and y values from the x,y point pairs
-        x_values, y_values = zip(*conf[CONF_DATAPOINTS])
+        # Spline interpolation requires sorted x values
+        x_values, y_values = zip(*sorted(conf[CONF_DATAPOINTS]))
 
-        # try to get valid coefficients for a polynomial
-        polynomial = Polynomial.fit(x_values, y_values, degree, domain=[])  # type: ignore
+        method = conf[CONF_METHOD]
+        if method == "cubicspline":
+            cs = CubicSpline(x_values, y_values, bc_type="natural")
+            evaluator = lambda x: cs(x).item()
+        else:
+            # try to get valid coefficients for a polynomial
+            evaluator = Polynomial.fit(x_values, y_values, degree, domain=[])  # type: ignore
+
         data = {
-            k: v for k, v in conf.items() if k not in [CONF_DEGREE, CONF_DATAPOINTS]
+            k: v for k, v in conf.items() if k not in [CONF_DEGREE, CONF_DATAPOINTS, CONF_METHOD]
         }
-        data[CONF_POLYNOMIAL] = polynomial
+        data[CONF_POLYNOMIAL] = evaluator
 
         hass.data[DATA_CALIBRATION][calibration] = data
 

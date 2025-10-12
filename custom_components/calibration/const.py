@@ -10,6 +10,7 @@ CONF_DEGREE = "degree"
 CONF_HIDE_SOURCE = "hide_source"
 CONF_PRECISION = "precision"
 CONF_POLYNOMIAL = "polynomial"
+CONF_METHOD = "method"
 
 DATA_CALIBRATION = "calibration_data"
 
@@ -21,3 +22,6 @@ ATTR_SOURCE_VALUE = "source_value"
 DEFAULT_DEGREE = 1
 DEFAULT_NAME = "Calibrated"
 DEFAULT_PRECISION = 2
+DEFAULT_METHOD = "polynomial"
+
+VALID_METHODS = ["polynomial", "cubicspline"]
