@@ -134,7 +134,7 @@ class CalibrationSensor(SensorEntity):  # pylint: disable=too-many-instance-attr
             ATTR_SOURCE_VALUE: None,
             ATTR_SOURCE: source,
             ATTR_SOURCE_ATTRIBUTE: attribute,
-            ATTR_COEFFICIENTS: polynomial.coef.tolist(),
+            ATTR_COEFFICIENTS: polynomial.coef.tolist() if hasattr(polynomial, "coef") else [],
             ATTR_STATE_CLASS: state_class,
         }
         self._attr_extra_state_attributes = {
