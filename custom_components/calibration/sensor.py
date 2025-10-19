@@ -78,7 +78,8 @@ async def async_setup_platform(  # pylint: disable=too-many-locals
     source_entity: RegistryEntry | None = ent_reg.async_get(source)
 
     if not (attribute := conf.get(CONF_ATTRIBUTE)):
-        units = units or get_unit_of_measurement(hass, source)
+        if units is None:
+            units = conf.get(CONF_UNIT_OF_MEASUREMENT)
         device_class = device_class or get_device_class(hass, source)
         state_class = state_class or get_capability(hass, source, ATTR_STATE_CLASS)
 
